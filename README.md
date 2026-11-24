@@ -1,32 +1,39 @@
 # Task 05 — Linux Server Administration & Nginx Reverse Proxy
 
-## Objective
-Configure a secure Linux server environment with SSH key authentication, UFW firewall rules, and Nginx reverse proxy.
+A practical Ubuntu server-hardening and reverse-proxy configuration project.
 
-## Implementation
-- Linux server administration and user permissions
-- SSH key-based authentication
-- UFW firewall configuration for ports 22, 80, and 443
-- Nginx reverse proxy configuration
-- Gzip compression
-- Browser caching headers
-- Request rate limiting
-- SSL/TLS configuration using Certbot or a sandbox certificate
+## Implemented repository deliverables
 
-## Project Structure
-```text
-task05-linux-nginx-reverse-proxy/
-├── README.md
-├── nginx/
-│   └── nginx.conf
-└── docs/
-    └── linux-configuration.md
+- `nginx/nginx.conf` — reverse proxy, gzip compression, static cache, API no-cache headers, request rate limiting, connection limits, proxy headers, and security headers.
+- `nginx/tls-server.conf.example` — HTTPS virtual-host reference with TLS 1.2/1.3 and HTTP-to-HTTPS redirect.
+- `docs/linux-configuration.md` — non-root administration, SSH key authentication, safe SSH hardening, UFW firewall, Nginx setup, Certbot TLS, verification, and rollback instructions.
+
+## Security controls
+
+- SSH key authentication; disable password/root login only after confirming a second key-authenticated session.
+- UFW defaults to deny inbound traffic; allow SSH from a trusted IP and HTTP/HTTPS.
+- Keep the application upstream private; do not expose port 8000 directly.
+- Rate-limit requests and connections at Nginx.
+- Do not cache health checks or dynamic API responses.
+- Never commit private keys, TLS private keys, passwords, or cloud credentials.
+
+## Configure and test
+
+See [Linux configuration runbook](docs/linux-configuration.md) and [Nginx configuration](nginx/nginx.conf).
+
+On an Ubuntu server, validate with:
+
+```bash
+sudo nginx -t
+sudo systemctl reload nginx
+sudo ufw status verbose
+curl -i http://YOUR_DOMAIN/health
 ```
 
-## Security Note
-Configurations and instructions are provided for a sandbox environment. Actual server security settings must be tested before production use.
+For a real TLS deployment, point DNS to the server and use Certbot as documented in the runbook.
 
-## Expected Proof
-- Nginx configuration
-- Linux configuration documentation
-- Configuration and testing evidence
+## Evidence and deployment status
+
+The repository contains reusable configuration and a step-by-step runbook. Actual server provisioning, SSH/UFW execution, DNS, certificate issuance, and live HTTPS checks must be performed on a real Linux host and supported by genuine evidence before claiming a live deployment.
+
+Evidence location: `docs/evidence/`.
